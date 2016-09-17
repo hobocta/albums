@@ -15,7 +15,6 @@ Log::log('Info: start');
 
 if (empty($config)) {
     Log::log('Error: empty config');
-
     return;
 }
 
