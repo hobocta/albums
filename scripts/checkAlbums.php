@@ -13,4 +13,8 @@ if (empty($config)) {
 
 $service = new Service($config);
 
-$service->checkAlbums();
+try {
+    $service->checkAlbums();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}

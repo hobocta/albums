@@ -1,6 +1,8 @@
 <?
 namespace Hbc\Album;
 
+use Exception;
+
 use Hbc\Tools\Log;
 
 final class Service
@@ -28,9 +30,15 @@ final class Service
         
         $this->dbAlbums = $this->db->get();
 
+        Log::log(sprintf('Info: from db loaded artists count: %s', count($this->dbAlbums)));
+
         $artistsCount = 0;
 
-        foreach ($this->api->getArtists() as $artistId => $artist) {
+        $artists = $this->api->getArtists();
+
+        Log::log(sprintf('Info: from api loaded artists count: %s', count($artists)));
+
+        foreach ($artists as $artistId => $artist) {
             if (++$artistsCount <= $this->config['artistsLimit']) {
                 $this->processArtist($artistId, $artist);
             }
@@ -59,7 +67,9 @@ final class Service
             ));
         } else {
             if ($this->db->put($artistId, $albumId)) {
-                Email::send($this->config['email'], $artist, $album);
+                if (!Email::send($this->config['email'], $artist, $album)) {
+                    throw new Exception('Unable to send email');
+                }
 
                 Log::log(sprintf(
                     'Success: added to artist "%s" new album "%s"',

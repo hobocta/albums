@@ -1,6 +1,8 @@
 <?
 namespace Hbc\Album;
 
+use Exception;
+
 final class LastFm
 {
     private $apiKey = null;
@@ -36,7 +38,14 @@ final class LastFm
                 $page
             );
 
-            $response = json_decode(file_get_contents($url), true);
+            $response = $this->request($url);
+
+            if (
+                empty($response['artists']['artist'])
+                || empty($response['artists']['@attr']['totalPages'])
+            ) {
+                throw new Exception('Empty response');
+            }
 
             $totalPages = !empty($response['artists']['@attr']['totalPages'])
                 ? $response['artists']['@attr']['totalPages']
@@ -44,13 +53,11 @@ final class LastFm
 
             $page++;
 
-            if (!empty($response['artists']['artist'])) {
-                foreach ($response['artists']['artist'] as $artist) {
-                    if (!empty($artist['mbid']) && !isset($artists[$artist['mbid']])) {
-                        $artists[$artist['mbid']] = array(
-                            'name' => $artist['name'],
-                        );
-                    }
+            foreach ($response['artists']['artist'] as $artist) {
+                if (!empty($artist['mbid']) && !isset($artists[$artist['mbid']])) {
+                    $artists[$artist['mbid']] = array(
+                        'name' => $artist['name'],
+                    );
                 }
             }
         }
@@ -70,20 +77,33 @@ final class LastFm
             $artistId
         );
 
-        $response = json_decode(file_get_contents($url), true);
+        $response = $this->request($url);
+
+        if (empty($response['topalbums']['album'])) {
+            throw new Exception('Empty response');
+        }
 
         $albums = array();
 
-        if (!empty($response['topalbums']['album'])) {
-            foreach ($response['topalbums']['album'] as $album) {
-                if (!empty($album['mbid']) && !isset($albums[$album['mbid']])) {
-                    $albums[$album['mbid']] = array(
-                        'name' => $album['name'],
-                    );
-                }
+        foreach ($response['topalbums']['album'] as $album) {
+            if (!empty($album['mbid']) && !isset($albums[$album['mbid']])) {
+                $albums[$album['mbid']] = array(
+                    'name' => $album['name'],
+                );
             }
         }
 
         return $albums;
+    }
+
+    private function request($url)
+    {
+        $response = json_decode(file_get_contents($url), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Response is not json format');
+        }
+
+        return $response;
     }
 }
