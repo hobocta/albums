@@ -7,118 +7,118 @@ use Hbc\Tools\Log;
 
 final class Service
 {
-    var $config = array();
+	var $config = array();
 
-    var $api = null;
+	var $api = null;
 
-    var $db = null;
+	var $db = null;
 
-    var $dbAlbums = array();
+	var $dbAlbums = array();
 
-    public function __construct(array $config)
-    {
-        $this->config = $config;
+	public function __construct(array $config)
+	{
+		$this->config = $config;
 
-        $this->api = new LastFm($this->config['lastFmApiKey']);
+		$this->api = new LastFm($this->config['lastFmApiKey']);
 
-        $this->db = new Db($this->config['dbFilePath']);
-    }
+		$this->db = new Db($this->config['dbFilePath']);
+	}
 
-    public function checkAlbums()
-    {
-        Log::log('Info: start');
-        
-        $this->dbAlbums = $this->db->get();
+	public function checkAlbums()
+	{
+		Log::log('Info: start');
 
-        Log::log(sprintf('Info: from db loaded artists count: %s', count($this->dbAlbums)));
+		$this->dbAlbums = $this->db->get();
 
-        $artists = $this->api->getArtists(
-            $this->config['lastFmUser'],
-            $this->config['artistsLimit']
-        );
+		Log::log(sprintf('Info: from db loaded artists count: %s', count($this->dbAlbums)));
 
-        Log::log(sprintf('Info: from api loaded artists count: %s', count($artists)));
+		$artists = $this->api->getArtists(
+			$this->config['lastFmUser'],
+			$this->config['artistsLimit']
+		);
 
-        foreach ($artists as $artistId => $artist) {
-            $this->processArtist($artistId, $artist);
-        }
+		Log::log(sprintf('Info: from api loaded artists count: %s', count($artists)));
 
-        Log::log('Info: finish');
-    }
+		foreach ($artists as $artistId => $artist) {
+			$this->processArtist($artistId, $artist);
+		}
 
-    private function processArtist($artistId, $artist)
-    {
-        try {
-            $albums = $this->api->getAlbums($artistId);
-        } catch(Exception $e) {
-            Log::log($e->getMessage());
-        }
+		Log::log('Info: finish');
+	}
 
-        if (isset($albums)) {
-            $skippedAlbums = array();
+	private function processArtist($artistId, $artist)
+	{
+		try {
+			$albums = $this->api->getAlbums($artistId);
+		} catch(Exception $e) {
+			Log::log($e->getMessage());
+		}
 
-            foreach ($albums as $albumId => $album) {
-                $result = $this->processAlbum($artistId, $artist, $albumId, $album);
+		if (isset($albums)) {
+			$skippedAlbums = array();
 
-                if (!is_null($result['skip'])) {
-                    $skippedAlbums[] = $result['skip'];
-                }
-            }
+			foreach ($albums as $albumId => $album) {
+				$result = $this->processAlbum($artistId, $artist, $albumId, $album);
 
-            if (!empty($skippedAlbums)) {
-                Log::log(sprintf(
-                    'Skip: artist "%s" already have albums count: %s',
-                    $artist['name'],
-                    count($skippedAlbums)
-                ));
-            }
-        }
-    }
+				if (!is_null($result['skip'])) {
+					$skippedAlbums[] = $result['skip'];
+				}
+			}
 
-    private function processAlbum($artistId, $artist, $albumId, $album)
-    {
-        $result = array('skip' => null);
+			if (!empty($skippedAlbums)) {
+				Log::log(sprintf(
+					'Skip: artist "%s" already have albums count: %s',
+					$artist['name'],
+					count($skippedAlbums)
+				));
+			}
+		}
+	}
 
-        if (
-            isset($this->dbAlbums[$artistId])
-            && in_array($albumId, $this->dbAlbums[$artistId])
-        ) {
-            $result['skip'] = $album['name'];
-        } else {
-            $isEmail = !empty($this->config['email']);
-            $isEmailSent = false;
+	private function processAlbum($artistId, $artist, $albumId, $album)
+	{
+		$result = array('skip' => null);
 
-            if ($isEmail) {
-                $isEmailSent = Email::send($this->config['email'], $artist, $album);
+		if (
+			isset($this->dbAlbums[$artistId])
+			&& in_array($albumId, $this->dbAlbums[$artistId])
+		) {
+			$result['skip'] = $album['name'];
+		} else {
+			$isEmail = !empty($this->config['email']);
+			$isEmailSent = false;
 
-                if ($isEmailSent) {
-                    Log::log(sprintf(
-                        'Success: artist "%s" new album "%s" email sent',
-                        $artist['name'],
-                        $album['name']
-                    ));
-                } else {
-                    throw new Exception('Unable to send email');
-                }
-            }
+			if ($isEmail) {
+				$isEmailSent = Email::send($this->config['email'], $artist, $album);
 
-            if (!$isEmail || $isEmailSent) {
-                if ($this->db->put($artistId, $albumId)) {
-                    Log::log(sprintf(
-                        'Success: added to artist "%s" new album "%s"',
-                        $artist['name'],
-                        $album['name']
-                    ));
-                } else {
-                    Log::log(sprintf(
-                        'Error: unable to add to artist "%s" new album "%s"',
-                        $artist['name'],
-                        $album['name']
-                    ));
-                }
-            }
-        }
+				if ($isEmailSent) {
+					Log::log(sprintf(
+						'Success: artist "%s" new album "%s" email sent',
+						$artist['name'],
+						$album['name']
+					));
+				} else {
+					throw new Exception('Unable to send email');
+				}
+			}
 
-        return $result;
-    }
+			if (!$isEmail || $isEmailSent) {
+				if ($this->db->put($artistId, $albumId)) {
+					Log::log(sprintf(
+						'Success: added to artist "%s" new album "%s"',
+						$artist['name'],
+						$album['name']
+					));
+				} else {
+					Log::log(sprintf(
+						'Error: unable to add to artist "%s" new album "%s"',
+						$artist['name'],
+						$album['name']
+					));
+				}
+			}
+		}
+
+		return $result;
+	}
 }

@@ -7,14 +7,14 @@ require_once sprintf('%s/../classes/bootstrap.php', dirname(__FILE__));
 require_once sprintf('%s/../config/config.php', dirname(__FILE__));
 
 if (empty($config)) {
-    Log::log('Error: empty config');
-    return;
+	Log::log('Error: empty config');
+	return;
 }
 
 $service = new Service($config);
 
 try {
-    $service->checkAlbums();
+	$service->checkAlbums();
 } catch (Exception $e) {
-    echo $e->getMessage();
+	echo $e->getMessage();
 }
