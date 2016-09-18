@@ -65,22 +65,31 @@ final class Service
                 $album['name']
             ));
         } else {
-            if ($this->db->put($artistId, $albumId)) {
-                if (!Email::send($this->config['email'], $artist, $album)) {
+            $isEmail = !empty($this->config['email']);
+            $isEmailSent = false;
+
+            if ($isEmail) {
+                $isEmailSent = Email::send($this->config['email'], $artist, $album);
+
+                if (!$isEmailSent) {
                     throw new Exception('Unable to send email');
                 }
+            }
 
-                Log::log(sprintf(
-                    'Success: added to artist "%s" new album "%s"',
-                    $artist['name'],
-                    $album['name']
-                ));
-            } else {
-                Log::log(sprintf(
-                    'Error: unable to add to artist "%s" new album "%s"',
-                    $artist['name'],
-                    $album['name']
-                ));
+            if (!$isEmail || $isEmailSent) {
+                if ($this->db->put($artistId, $albumId)) {
+                    Log::log(sprintf(
+                        'Success: added to artist "%s" new album "%s"',
+                        $artist['name'],
+                        $album['name']
+                    ));
+                } else {
+                    Log::log(sprintf(
+                        'Error: unable to add to artist "%s" new album "%s"',
+                        $artist['name'],
+                        $album['name']
+                    ));
+                }
             }
         }
     }
