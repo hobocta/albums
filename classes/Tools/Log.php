@@ -1,5 +1,5 @@
 <?
-namespace Hbc\Album;
+namespace Hbc\Tools;
 
 final class Log
 {
