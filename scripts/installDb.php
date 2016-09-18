@@ -1,9 +1,8 @@
 <?
 use Hbc\Album\Db;
-use Hbc\Album\Log;
+use Hbc\Tools\Log;
 
-require_once sprintf('%s/../classes/Log.php', dirname(__FILE__));
-require_once sprintf('%s/../classes/Db.php', dirname(__FILE__));
+require_once sprintf('%s/../classes/bootstrap.php', dirname(__FILE__));
 
 require_once sprintf('%s/../config/config.php', dirname(__FILE__));
 
