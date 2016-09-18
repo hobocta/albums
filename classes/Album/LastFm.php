@@ -34,11 +34,12 @@ final class LastFm
 
             $response = $this->request($url);
 
-            if (
-                !isset($response['artists']['artist'])
-                || empty($response['artists']['@attr']['totalPages'])
-            ) {
-                throw new Exception('Empty response');
+            if (!isset($response['artists']['artist'])) {
+                throw new Exception('Empty artists list in response');
+            }
+
+            if (empty($response['artists']['@attr']['totalPages'])) {
+                throw new Exception('Empty "totalPages" key in response');
             }
 
             $totalPages = !empty($response['artists']['@attr']['totalPages'])
@@ -69,8 +70,16 @@ final class LastFm
 
         $response = $this->request($url);
 
+        if (!empty($response['error'])) {
+            throw new Exception(sprintf(
+                'Warning: error="%s", message="%s"',
+                $response['error'],
+                $response['message']
+            ));
+        }
+
         if (!isset($response['topalbums']['album'])) {
-            throw new Exception('Empty response');
+            throw new Exception('Empty albums list in response');
         }
 
         $albums = array();

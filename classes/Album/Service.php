@@ -48,22 +48,42 @@ final class Service
 
     private function processArtist($artistId, $artist)
     {
-        foreach ($this->api->getAlbums($artistId) as $albumId => $album) {
-            $this->processAlbum($artistId, $artist, $albumId, $album);
+        try {
+            $albums = $this->api->getAlbums($artistId);
+        } catch(Exception $e) {
+            Log::log($e->getMessage());
+        }
+
+        if (isset($albums)) {
+            $skippedAlbums = array();
+
+            foreach ($albums as $albumId => $album) {
+                $result = $this->processAlbum($artistId, $artist, $albumId, $album);
+
+                if (!is_null($result['skip'])) {
+                    $skippedAlbums[] = $result['skip'];
+                }
+            }
+
+            if (!empty($skippedAlbums)) {
+                Log::log(sprintf(
+                    'Skip: artist "%s" already have albums count: %s',
+                    $artist['name'],
+                    count($skippedAlbums)
+                ));
+            }
         }
     }
 
     private function processAlbum($artistId, $artist, $albumId, $album)
     {
+        $result = array('skip' => null);
+
         if (
             isset($this->dbAlbums[$artistId])
             && in_array($albumId, $this->dbAlbums[$artistId])
         ) {
-            Log::log(sprintf(
-                'Skip: artist "%s" already have album "%s"',
-                $artist['name'],
-                $album['name']
-            ));
+            $result['skip'] = $album['name'];
         } else {
             $isEmail = !empty($this->config['email']);
             $isEmailSent = false;
@@ -71,7 +91,13 @@ final class Service
             if ($isEmail) {
                 $isEmailSent = Email::send($this->config['email'], $artist, $album);
 
-                if (!$isEmailSent) {
+                if ($isEmailSent) {
+                    Log::log(sprintf(
+                        'Success: artist "%s" new album "%s" email sent',
+                        $artist['name'],
+                        $album['name']
+                    ));
+                } else {
                     throw new Exception('Unable to send email');
                 }
             }
@@ -92,5 +118,7 @@ final class Service
                 }
             }
         }
+
+        return $result;
     }
 }
