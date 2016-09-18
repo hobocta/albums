@@ -35,7 +35,7 @@ final class LastFm
             $response = $this->request($url);
 
             if (
-                empty($response['artists']['artist'])
+                !isset($response['artists']['artist'])
                 || empty($response['artists']['@attr']['totalPages'])
             ) {
                 throw new Exception('Empty response');
@@ -69,7 +69,7 @@ final class LastFm
 
         $response = $this->request($url);
 
-        if (empty($response['topalbums']['album'])) {
+        if (!isset($response['topalbums']['album'])) {
             throw new Exception('Empty response');
         }
 
