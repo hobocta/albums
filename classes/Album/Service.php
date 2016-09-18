@@ -19,7 +19,7 @@ final class Service
     {
         $this->config = $config;
 
-        $this->api = new LastFm($this->config['lastFmApiKey'], $this->config['lastFmLogin']);
+        $this->api = new LastFm($this->config['lastFmApiKey']);
 
         $this->db = new Db($this->config['dbFilePath']);
     }

@@ -6,15 +6,12 @@ use Exception;
 final class LastFm
 {
     private $apiKey = null;
-    private $login = null;
 
     const API_URL = 'http://ws.audioscrobbler.com/2.0/';
 
-    public function __construct($apiKey, $login)
+    public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
-
-        $this->login = $login;
     }
 
     public function getArtists($user, $limit)
