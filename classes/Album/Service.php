@@ -32,16 +32,15 @@ final class Service
 
         Log::log(sprintf('Info: from db loaded artists count: %s', count($this->dbAlbums)));
 
-        $artistsCount = 0;
-
-        $artists = $this->api->getArtists();
+        $artists = $this->api->getArtists(
+            $this->config['lastFmUser'],
+            $this->config['artistsLimit']
+        );
 
         Log::log(sprintf('Info: from api loaded artists count: %s', count($artists)));
 
         foreach ($artists as $artistId => $artist) {
-            if (++$artistsCount <= $this->config['artistsLimit']) {
-                $this->processArtist($artistId, $artist);
-            }
+            $this->processArtist($artistId, $artist);
         }
 
         Log::log('Info: finish');

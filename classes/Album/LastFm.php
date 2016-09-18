@@ -17,26 +17,23 @@ final class LastFm
         $this->login = $login;
     }
 
-    public function getArtists()
+    public function getArtists($user, $limit)
     {
-        $method = 'library.getartists';
-
         $artists = array();
-
-        $limit = 1000;
 
         $page = 1;
 
-        while (!isset($totalPages) || $page <= $totalPages) {
-            $url = sprintf(
-                '%s?method=%s&api_key=%s&user=%s&limit=%s&page=%s&format=json',
-                self::API_URL,
-                $method,
-                $this->apiKey,
-                $this->login,
-                $limit,
-                $page
-            );
+        while (
+            count($artists) < $limit
+            && (
+                !isset($totalPages)
+                || $page <= $totalPages
+            )
+        ) {
+            $url = $this->getUrl('library.getartists', array(
+                'user' => $user,
+                'page' => $page,
+            ));
 
             $response = $this->request($url);
 
@@ -62,20 +59,16 @@ final class LastFm
             }
         }
 
+        if (count($artists) > $limit) {
+            $artists = array_slice($artists, 0, $limit);
+        }
+
         return $artists;
     }
 
     public function getAlbums($artistId)
     {
-        $method = 'artist.getTopAlbums';
-
-        $url = sprintf(
-            '%s?method=%s&api_key=%s&mbid=%s&format=json',
-            self::API_URL,
-            $method,
-            $this->apiKey,
-            $artistId
-        );
+        $url = $this->getUrl('artist.getTopAlbums', array('mbid' => $artistId));
 
         $response = $this->request($url);
 
@@ -98,12 +91,39 @@ final class LastFm
 
     private function request($url)
     {
-        $response = json_decode(file_get_contents($url), true);
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $response = json_decode($response, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception('Response is not json format');
         }
 
         return $response;
+    }
+
+    private function getUrl($method, array $params = array())
+    {
+        $params = array_merge($params, array('format' => 'json'));
+
+        $url = sprintf(
+            '%s?method=%s&api_key=%s',
+            self::API_URL,
+            $method,
+            $this->apiKey
+        );
+
+        foreach ($params as $key => $value) {
+            $url .= sprintf('&%s=%s', $key, $value);
+        }
+
+        return $url;
     }
 }
