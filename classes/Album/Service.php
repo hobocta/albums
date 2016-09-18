@@ -46,6 +46,16 @@ final class Service
 		Log::log('Info: finish');
 	}
 
+	public function showArtists()
+	{
+		$artists = $this->api->getArtists(
+			$this->config['lastFmUser'],
+			$this->config['artistsLimit']
+		);
+
+		echo json_encode($artists, JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE);
+	}
+
 	private function processArtist($artistId, $artist)
 	{
 		try {
