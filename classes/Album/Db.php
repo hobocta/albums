@@ -14,7 +14,9 @@ final class Db
 
 	public function install()
 	{
-		return $this->db->exec('CREATE TABLE albums (artist TEXT, album TEXT, createAt INTEGER)');
+		return $this->db->exec(
+			'CREATE TABLE IF NOT EXISTS albums (artist TEXT, album TEXT, createAt INTEGER)'
+		);
 	}
 
 	public function get()
