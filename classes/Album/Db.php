@@ -9,7 +9,16 @@ final class Db
 
 	public function __construct($dbPath)
 	{
-		$this->db = new SQLite3($dbPath);
+		$this->db = new SQLite3($this->getDbPath($dbPath));
+	}
+
+	private function getDbPath($dbPath)
+	{
+		if (file_exists(dirname($dbPath))) {
+			return $dbPath;
+		} else {
+			return sprintf('%s/../../%s', dirname(__FILE__), $dbPath);
+		}
 	}
 
 	public function install()
