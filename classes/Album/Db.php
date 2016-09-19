@@ -3,6 +3,8 @@ namespace Hbc\Album;
 
 use SQLite3;
 
+use Hbc\Tools\Env;
+
 final class Db
 {
 	var $db = null;
@@ -17,7 +19,7 @@ final class Db
 		if (file_exists(dirname($dbPath))) {
 			return $dbPath;
 		} else {
-			return sprintf('%s/../../%s', dirname(__FILE__), $dbPath);
+			return sprintf('%s/%s', Env::getRootDir(), $dbPath);
 		}
 	}
 
