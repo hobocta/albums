@@ -1,5 +1,5 @@
 <?
-namespace Hbc\Album;
+namespace Hobocta\Album;
 
 final class Email
 {
@@ -14,8 +14,8 @@ final class Email
 
 		$mail = array(
 			'headers' => sprintf('From: %s', $email),
-			'title' => sprintf('Новый альбом: %s - %s', $artist['name'], $album['name']),
-			'body' => implode(PHP_EOL, $links),
+			'title'   => sprintf('Новый альбом: %s - %s', $artist['name'], $album['name']),
+			'body'    => implode(PHP_EOL, $links),
 		);
 
 		return mail($email, $mail['title'], $mail['body'], $mail['headers']);

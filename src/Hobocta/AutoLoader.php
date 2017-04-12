@@ -1,5 +1,5 @@
 <?
-namespace Hbc;
+namespace Hobocta;
 
 final class AutoLoader
 {
@@ -7,9 +7,9 @@ final class AutoLoader
 
 	public static function loadPackages($className)
 	{
-		$pathParts = explode('\\', str_replace('Hbc/', '', str_replace('\\', '/', $className)));
+		$pathParts = explode('\\', str_replace('\\', '/', $className));
 		self::$lastLoadedFilePath = sprintf(
-			'%s/%s',
+			'%s/../%s',
 			dirname(__FILE__),
 			sprintf('%s.php', implode(DIRECTORY_SEPARATOR, $pathParts))
 		);

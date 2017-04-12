@@ -1,9 +1,8 @@
 <?
-namespace Hbc\Album;
+namespace Hobocta\Album;
 
 use Exception;
-
-use Hbc\Tools\Log;
+use Hobocta\Tools\Log;
 
 final class Service
 {
@@ -60,7 +59,7 @@ final class Service
 	{
 		try {
 			$albums = $this->api->getAlbums($artistId);
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			Log::log($e->getMessage());
 		}
 
@@ -76,11 +75,13 @@ final class Service
 			}
 
 			if (!empty($skippedAlbums)) {
-				Log::log(sprintf(
-					'Skip: artist "%s" already have albums count: %s',
-					$artist['name'],
-					count($skippedAlbums)
-				));
+				Log::log(
+					sprintf(
+						'Skip: artist "%s" already have albums count: %s',
+						$artist['name'],
+						count($skippedAlbums)
+					)
+				);
 			}
 		}
 	}
@@ -102,11 +103,13 @@ final class Service
 				$isEmailSent = Email::send($this->config['email'], $artist, $album);
 
 				if ($isEmailSent) {
-					Log::log(sprintf(
-						'Success: artist "%s" new album "%s" email sent',
-						$artist['name'],
-						$album['name']
-					));
+					Log::log(
+						sprintf(
+							'Success: artist "%s" new album "%s" email sent',
+							$artist['name'],
+							$album['name']
+						)
+					);
 				} else {
 					throw new Exception('Unable to send email');
 				}
@@ -114,17 +117,21 @@ final class Service
 
 			if (!$isEmail || $isEmailSent) {
 				if ($this->db->put($artistId, $albumId)) {
-					Log::log(sprintf(
-						'Success: added to artist "%s" new album "%s"',
-						$artist['name'],
-						$album['name']
-					));
+					Log::log(
+						sprintf(
+							'Success: added to artist "%s" new album "%s"',
+							$artist['name'],
+							$album['name']
+						)
+					);
 				} else {
-					Log::log(sprintf(
-						'Error: unable to add to artist "%s" new album "%s"',
-						$artist['name'],
-						$album['name']
-					));
+					Log::log(
+						sprintf(
+							'Error: unable to add to artist "%s" new album "%s"',
+							$artist['name'],
+							$album['name']
+						)
+					);
 				}
 			}
 		}
