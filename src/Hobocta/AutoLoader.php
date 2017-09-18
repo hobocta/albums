@@ -14,6 +14,7 @@ final class AutoLoader
 			sprintf('%s.php', implode(DIRECTORY_SEPARATOR, $pathParts))
 		);
 
+		/** @noinspection PhpIncludeInspection */
 		require_once(static::$lastLoadedFilePath);
 	}
 
