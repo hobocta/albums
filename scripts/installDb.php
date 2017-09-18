@@ -10,7 +10,7 @@ $config = require sprintf('%s/../config/main.php', dirname(__FILE__));
 
 Log::log('Info: start');
 
-if (empty($config)) {
+if (empty($config) || !is_array($config)) {
     Log::log('Error: empty config');
     return;
 }

@@ -8,7 +8,7 @@ require_once sprintf('%s/../src/Hobocta/bootstrap.php', dirname(__FILE__));
 /** @noinspection PhpIncludeInspection */
 $config = require sprintf('%s/../config/main.php', dirname(__FILE__));
 
-if (empty($config)) {
+if (empty($config) || !is_array($config)) {
     Log::log('Error: empty config');
     return;
 }
