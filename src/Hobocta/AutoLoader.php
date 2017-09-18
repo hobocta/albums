@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Hobocta;
 
 final class AutoLoader

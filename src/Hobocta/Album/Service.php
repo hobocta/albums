@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Hobocta\Album;
 
 use Exception;

@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Hobocta\Tools;
 
 final class Env

@@ -1,4 +1,4 @@
-<?
+<?php
 use Hobocta\Album\Db;
 use Hobocta\Tools\Log;
 
