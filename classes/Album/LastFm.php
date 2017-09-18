@@ -121,7 +121,7 @@ final class LastFm
 
 		$url = sprintf(
 			'%s?method=%s&api_key=%s',
-			self::API_URL,
+			static::API_URL,
 			$method,
 			$this->apiKey
 		);

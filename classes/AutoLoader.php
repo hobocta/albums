@@ -8,18 +8,18 @@ final class AutoLoader
 	public static function loadPackages($className)
 	{
 		$pathParts = explode('\\', str_replace('Hbc/', '', str_replace('\\', '/', $className)));
-		self::$lastLoadedFilePath = sprintf(
+		static::$lastLoadedFilePath = sprintf(
 			'%s/%s',
 			dirname(__FILE__),
 			sprintf('%s.php', implode(DIRECTORY_SEPARATOR, $pathParts))
 		);
 
-		require_once(self::$lastLoadedFilePath);
+		require_once(static::$lastLoadedFilePath);
 	}
 
 	public static function loadPackagesAndLog($className)
 	{
-		self::loadPackages($className);
-		printf("Class %s was loaded from %s", $className, self::$lastLoadedFilePath);
+		static::loadPackages($className);
+		printf("Class %s was loaded from %s", $className, static::$lastLoadedFilePath);
 	}
 }
