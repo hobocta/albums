@@ -11,16 +11,16 @@ $config = require sprintf('%s/../config/main.php', dirname(__FILE__));
 Log::log('Info: start');
 
 if (empty($config)) {
-	Log::log('Error: empty config');
-	return;
+    Log::log('Error: empty config');
+    return;
 }
 
 $db = new Db($config['dbFilePath']);
 
 if ($dbAlbums = $db->install()) {
-	Log::log('Success');
+    Log::log('Success');
 } else {
-	Log::log('Error');
+    Log::log('Error');
 }
 
 Log::log('Info: finish');

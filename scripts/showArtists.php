@@ -9,14 +9,14 @@ require_once sprintf('%s/../src/Hobocta/bootstrap.php', dirname(__FILE__));
 $config = require sprintf('%s/../config/main.php', dirname(__FILE__));
 
 if (empty($config)) {
-	Log::log('Error: empty config');
-	return;
+    Log::log('Error: empty config');
+    return;
 }
 
 $service = new Service($config);
 
 try {
-	$service->showArtists();
+    $service->showArtists();
 } catch (Exception $e) {
-	echo $e->getMessage();
+    echo $e->getMessage();
 }
