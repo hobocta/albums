@@ -1,5 +1,5 @@
 <?
-namespace Hbc\Album;
+namespace Hobocta\Album;
 
 use Exception;
 
@@ -27,10 +27,13 @@ final class LastFm
 				|| $page <= $totalPages
 			)
 		) {
-			$url = $this->getUrl('library.getartists', array(
-				'user' => $user,
-				'page' => $page,
-			));
+			$url = $this->getUrl(
+				'library.getartists',
+				array(
+					'user' => $user,
+					'page' => $page,
+				)
+			);
 
 			$response = $this->request($url);
 
@@ -71,11 +74,13 @@ final class LastFm
 		$response = $this->request($url);
 
 		if (!empty($response['error'])) {
-			throw new Exception(sprintf(
-				'Warning: error="%s", message="%s"',
-				$response['error'],
-				$response['message']
-			));
+			throw new Exception(
+				sprintf(
+					'Warning: error="%s", message="%s"',
+					$response['error'],
+					$response['message']
+				)
+			);
 		}
 
 		if (!isset($response['topalbums']['album'])) {

@@ -1,9 +1,8 @@
 <?
-namespace Hbc\Album;
+namespace Hobocta\Album;
 
+use Hobocta\Tools\Env;
 use SQLite3;
-
-use Hbc\Tools\Env;
 
 final class Db
 {
@@ -49,11 +48,13 @@ final class Db
 
 	public function put($artistId, $albumId)
 	{
-		return $this->db->exec(sprintf(
-			"INSERT INTO albums (artist, album, createAt) VALUES ('%s', '%s', %s)",
-			$artistId,
-			$albumId,
-			time()
-		));
+		return $this->db->exec(
+			sprintf(
+				"INSERT INTO albums (artist, album, createAt) VALUES ('%s', '%s', %s)",
+				$artistId,
+				$albumId,
+				time()
+			)
+		);
 	}
 }
