@@ -4,7 +4,7 @@ use Hobocta\Tools\Log;
 
 require_once sprintf('%s/../src/Hobocta/bootstrap.php', dirname(__FILE__));
 
-$config = require sprintf('%s/../config/config.php', dirname(__FILE__));
+$config = require sprintf('%s/../config/main.php', dirname(__FILE__));
 
 if (empty($config)) {
 	Log::log('Error: empty config');
