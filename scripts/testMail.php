@@ -2,8 +2,10 @@
 use Hobocta\Album\Email;
 use Hobocta\Tools\Log;
 
+/** @noinspection PhpIncludeInspection */
 require_once sprintf('%s/../src/Hobocta/bootstrap.php', dirname(__FILE__));
 
+/** @noinspection PhpIncludeInspection */
 $config = require sprintf('%s/../config/main.php', dirname(__FILE__));
 
 if (empty($config)) {
