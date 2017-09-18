@@ -2,7 +2,7 @@
 namespace Hobocta\Album;
 
 use Exception;
-use Hobocta\Tools\Log;
+use Hobocta\Tools\Logger;
 
 final class Service
 {
@@ -25,24 +25,24 @@ final class Service
 
     public function checkAlbums()
     {
-        Log::log('Info: start');
+        Logger::log('Info: start');
 
         $this->dbAlbums = $this->db->get();
 
-        Log::log(sprintf('Info: from db loaded artists count: %s', count($this->dbAlbums)));
+        Logger::log(sprintf('Info: from db loaded artists count: %s', count($this->dbAlbums)));
 
         $artists = $this->api->getArtists(
             $this->config['lastFmUser'],
             $this->config['artistsLimit']
         );
 
-        Log::log(sprintf('Info: from api loaded artists count: %s', count($artists)));
+        Logger::log(sprintf('Info: from api loaded artists count: %s', count($artists)));
 
         foreach ($artists as $artistId => $artist) {
             $this->processArtist($artistId, $artist);
         }
 
-        Log::log('Info: finish');
+        Logger::log('Info: finish');
     }
 
     public function showArtists()
@@ -60,7 +60,7 @@ final class Service
         try {
             $albums = $this->api->getAlbums($artistId);
         } catch (Exception $e) {
-            Log::log($e->getMessage());
+            Logger::log($e->getMessage());
         }
 
         if (isset($albums)) {
@@ -75,7 +75,7 @@ final class Service
             }
 
             if (!empty($skippedAlbums)) {
-                Log::log(
+                Logger::log(
                     sprintf(
                         'Skip: artist "%s" already have albums count: %s',
                         $artist['name'],
@@ -103,7 +103,7 @@ final class Service
                 $isEmailSent = Email::send($this->config['email'], $artist, $album);
 
                 if ($isEmailSent) {
-                    Log::log(
+                    Logger::log(
                         sprintf(
                             'Success: artist "%s" new album "%s" email sent',
                             $artist['name'],
@@ -117,7 +117,7 @@ final class Service
 
             if (!$isEmail || $isEmailSent) {
                 if ($this->db->put($artistId, $albumId)) {
-                    Log::log(
+                    Logger::log(
                         sprintf(
                             'Success: added to artist "%s" new album "%s"',
                             $artist['name'],
@@ -125,7 +125,7 @@ final class Service
                         )
                     );
                 } else {
-                    Log::log(
+                    Logger::log(
                         sprintf(
                             'Error: unable to add to artist "%s" new album "%s"',
                             $artist['name'],

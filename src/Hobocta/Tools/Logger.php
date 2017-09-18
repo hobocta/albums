@@ -1,7 +1,7 @@
 <?php
 namespace Hobocta\Tools;
 
-final class Log
+final class Logger
 {
     public static function log($message)
     {

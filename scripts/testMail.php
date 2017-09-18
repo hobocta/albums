@@ -1,6 +1,6 @@
 <?php
 use Hobocta\Album\Email;
-use Hobocta\Tools\Log;
+use Hobocta\Tools\Logger;
 
 /** @noinspection PhpIncludeInspection */
 require_once sprintf('%s/../src/Hobocta/bootstrap.php', dirname(__FILE__));
@@ -9,7 +9,7 @@ require_once sprintf('%s/../src/Hobocta/bootstrap.php', dirname(__FILE__));
 $config = require sprintf('%s/../config/main.php', dirname(__FILE__));
 
 if (empty($config) || !is_array($config)) {
-    Log::log('Error: empty config');
+    Logger::log('Error: empty config');
     return;
 }
 
@@ -20,7 +20,7 @@ $isEmailSent = Email::send(
 );
 
 if ($isEmailSent) {
-    Log::log('Success: email sent');
+    Logger::log('Success: email sent');
 } else {
     throw new Exception('Unable to send email');
 }
