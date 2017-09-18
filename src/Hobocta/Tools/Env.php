@@ -5,6 +5,6 @@ final class Env
 {
 	public static function getRootDir()
 	{
-		return sprintf('%s/../..');
+		return sprintf('%s/../..', dirname(__FILE__));
 	}
 }
