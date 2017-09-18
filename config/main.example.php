@@ -1,4 +1,7 @@
 <?php
+/**
+ * Rename this file to main.php
+ */
 return array(
 	'lastFmApiKey' => 'key',
 	'lastFmUser' => 'login',
